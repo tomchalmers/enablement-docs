@@ -39,7 +39,7 @@ As a learner you will be able to
 _____
 
 <!-- ## 10,000 Ft View
-> This exercise is aimed at the creation of the tooling that will be used to support the rest of the Exercises. The high-level goal is to create a collection of project spaces and populate them with Git, Jenkins & Nexus.
+> This exercise is aimed at the creation of the tooling that will be used to support the rest of the Exercises. The high-level goal is to create a collection of project namespaces and populate them with Git, Jenkins & Nexus.
 
 If you're feeling confident and don't want to follow the step-by-step guide these high-level instructions should provide a challenge for you:
 
