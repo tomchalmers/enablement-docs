@@ -39,7 +39,7 @@ As a learner you will be able to
 _____
 
 <!-- ## 10,000 Ft View
-> This exercise is aimed at the creation of the tooling that will be used to support the rest of the Exercises. The high-level goal is to create a collection of project namespaces and populate them with Git, Jenkins & Nexus.
+> This exercise is aimed at the creation of the tooling that will be used to support the rest of the Exercises. The high-level goal is to create a collection of project spaces and populate them with Git, Jenkins & Nexus.
 
 If you're feeling confident and don't want to follow the step-by-step guide these high-level instructions should provide a challenge for you:
 
@@ -127,14 +127,14 @@ https://codeready-workspaces.apps.<DOMAIN_FOR_YOUR_CLASS>/dashboard/#/load-facto
  * `requirements.yml` is a manifest which contains the ansible roles needed to run the playbook
  * `apply.yml` is a playbook that sets up some variables and runs the OpenShift Applier role.
 
-4. Open the `inventory/groups_vars/all.yml` file. Update the `namespace_prefix` variables by replacing the `<YOUR_NAME>` (including the `<` and `>`) with your name or initials. **Don't use uppercase or special characters**. For example; if your name is Tim Smith you would replace `<YOUR_NAME>` and set `namespace_prefix` to something like `tim` or `tsmith`.
+4. Open the `inventory/groups_vars/all.yml` file. Update the `namespace_prefix` variables by replacing the `<YOUR_TEAM_NAME>` (including the `<` and `>`) with your teams name. **Don't use uppercase or special characters**. For example; if your team name is Awesome Team you would replace `<YOUR_TEAM_NAME>` and set `namespace_prefix` to something like `awesometeam` or `awesome`.
 
 <kbd>📝 *enablement-ci-cd/inventory/groups_vars/all.yml*</kbd>
 ```yaml
-  namespace_prefix: "<YOUR_NAME>"
+  namespace_prefix: "<YOUR_TEAM_NAME>"
 ```
 
-5. Open the `inventory/host_vars/projects-and-policies.yml` file; you should see some variables setup already to create the `<YOUR_NAME>-ci-cd` namespace. This object is passed to the OpenShift Applier to call the `templates/project-requests.yml` template with the parameters composed from the inventory and the `ci_cd` vars in the `apply.yml` playbook. We will add some additional content here but first let's explore the parameters and the template
+5. Open the `inventory/host_vars/projects-and-policies.yml` file; you should see some variables setup already to create the `<YOUR_TEAM_NAME>-ci-cd` namespace. This object is passed to the OpenShift Applier to call the `templates/project-requests.yml` template with the parameters composed from the inventory and the `ci_cd` vars in the `apply.yml` playbook. We will add some additional content here but first let's explore the parameters and the template
 
 6. Inside of the `inventory/host_vars/projects-and-policies.yml` you'll see the following
 
@@ -295,7 +295,7 @@ ansible-playbook apply.yml -e target=tools \
      -e "filter_tags=nexus"
 ```
 
-5. Once successful, login to the cluster through the browser (using cluster URL) and navigate to the `<YOUR_NAME>-ci-cd`. You should see Nexus up and running. You can login with default credentials (admin / admin123) ![nexus-up-and-running](../images/exercise1/nexus-up-and-running.png)
+5. Once successful, login to the cluster through the browser (using cluster URL) and navigate to the `<YOUR_TEAM_NAME>-ci-cd`. You should see Nexus up and running. You can login with default credentials (admin / admin123) ![nexus-up-and-running](../images/exercise1/nexus-up-and-running.png)
 
 ### Part 4 - Commit CI/CD
 
@@ -346,7 +346,7 @@ git commit -m "ADD - mongodb for use in the pipeline"
 git push
 ```
 
-3. Apply this change as done previously using Ansible. The deployment can be validated by going to your `<YOUR_NAME>-ci-cd` namespace and checking if it is there!
+3. Apply this change as done previously using Ansible. The deployment can be validated by going to your `<YOUR_TEAM_NAME>-ci-cd` namespace and checking if it is there!
 ```bash
 ansible-playbook apply.yml -e target=tools \
   -i inventory/ \
@@ -361,17 +361,17 @@ ansible-playbook apply.yml -e target=tools \
 ### Part 6 - Jenkins & S2I
 > _Create a build and deployment config for Jenkins. Add new configuration and plugins to the OpenShift default Jenkins image using s2i_
 
-1. As before; create a new set of params by creating a `params/jenkins` file and adding some overrides to the template and updating the `<YOUR_NAME>` value accordingly.
+1. As before; create a new set of params by creating a `params/jenkins` file and adding some overrides to the template and updating the `<YOUR_TEAM_NAME>` value accordingly.
 
 <kbd>📝 *enablement-ci-cd/params/jenkins*</kbd>
 ```
 MEMORY_LIMIT=3Gi
 VOLUME_CAPACITY=10Gi
 JVM_ARCH=x86_64
-NAMESPACE=<YOUR_NAME>-ci-cd
+NAMESPACE=<YOUR_TEAM_NAME>-ci-cd
 JENKINS_OPTS=--sessionTimeout=720
 ```
-  * You might be wondering why we have to replace <YOUR_NAME> here and can't just rely on the `namespace_prefix` variable that we've been using previously. This is because the replacement is handled by two different engines (one being ansible -- which knows about `namespace_prefix` and the other being the oc client, which does not). Because the params files are processed by the oc client, we need to update this here.
+  * You might be wondering why we have to replace <YOUR_TEAM_NAME> here and can't just rely on the `namespace_prefix` variable that we've been using previously. This is because the replacement is handled by two different engines (one being ansible -- which knows about `namespace_prefix` and the other being the oc client, which does not). Because the params files are processed by the oc client, we need to update this here.
 
 2. Add a `jenkins` variable to the Ansible inventory underneath the jenkins-mongo in  `inventory/host_vars/ci-cd-tooling.yml` as shown below to create a DeploymentConfig for Jenkins. In order for Jenkins to be able to run `npm` commands we must configure a jenkins build slave for it to use. This slave will be dynamically provisioned when we run a build. It needs to have Node.js and npm and a C compiler installed in it. 
 
@@ -499,7 +499,7 @@ ansible-playbook apply.yml -e target=tools \
      -e "filter_tags=jenkins"
 ```
 
-11. This will trigger a build of the s2i and when it's complete it will add an imagestream of `<YOUR_NAME>-ci-cd/jenkins:latest` to the project. The Deployment config should kick in and deploy the image once it arrives. You can follow the build of the s2i by going to the OpenShift console's project
+11. This will trigger a build of the s2i and when it's complete it will add an imagestream of `<YOUR_TEAM_NAME>-ci-cd/jenkins:latest` to the project. The Deployment config should kick in and deploy the image once it arrives. You can follow the build of the s2i by going to the OpenShift console's project
 ![jenkins-s2i-log](../images/exercise1/jenkins-s2i-log.png)
 
 12. When the Jenkins deployment has completed; login (using your OpenShift credentials) and accept the role permissions. You should now see a fairly empty Jenkins with just the seed job
@@ -534,12 +534,12 @@ git push
 
 2. Burn your OpenShift project resources to the ground
 ```bash
-oc delete project <YOUR_NAME>-ci-cd <YOUR_NAME>-dev <YOUR_NAME>-test
+oc delete project <YOUR__TEAM_NAME>-ci-cd <YOUR_TEAM_NAME>-dev <YOUR_TEAM_NAME>-test
 ```
 
 3. Check to see the projects that were marked for deletion are removed.
 ```bash
-oc get projects | egrep '<YOUR_NAME>-ci-cd|<YOUR_NAME>-dev|<YOUR_NAME>-test'
+oc get projects | egrep '<YOUR_TEAM_NAME>-ci-cd|<YOUR_TEAM_NAME>-dev|<YOUR_TEAM_NAME>-test'
 ```
 
 4. Re-apply the inventory to re-create it all!
